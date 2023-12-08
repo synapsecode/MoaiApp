@@ -31,7 +31,8 @@ dependencies:
   flutter:
     sdk: flutter
 
-  riverpod: ^2.4.9
+  flutter_riverpod:
+  flutter_secure_storage: ^9.0.0
 
   # Huddle01
   flutter_webrtc: ^0.9.41

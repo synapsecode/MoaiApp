@@ -1,7 +1,21 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:moai_app/playground/playground_launcher.dart';
+import 'package:moai_app/services/xmtp/xmtpinterface.dart';
+
+final navigatorKey = GlobalKey<NavigatorState>();
+FlutterSecureStorage get storage => const FlutterSecureStorage();
+final gpc = ProviderContainer();
 
 void main() {
-  runApp(const MoaiApplication());
+  MoaiXMTPInterface.instance.initalizeWalletProvider();
+  runApp(
+    UncontrolledProviderScope(
+      container: gpc,
+      child: const MoaiApplication(),
+    ),
+  );
 }
 
 class MoaiApplication extends StatelessWidget {
@@ -10,14 +24,17 @@ class MoaiApplication extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Moai App',
-      theme: ThemeData(
-        colorScheme:
-            ColorScheme.fromSeed(seedColor: Color.fromARGB(255, 255, 230, 7)),
-        useMaterial3: true,
+    return ProviderScope(
+      child: MaterialApp(
+        title: 'Moai App',
+        theme: ThemeData(
+          colorScheme: ColorScheme.fromSeed(
+              seedColor: const Color.fromARGB(255, 255, 230, 7)),
+          useMaterial3: true,
+        ),
+        navigatorKey: navigatorKey,
+        home: const PlaygroundLauncher(),
       ),
-      home: WelcomeScreen(),
     );
   }
 }
@@ -29,7 +46,7 @@ class WelcomeScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Welcome to Moai'),
+        title: const Text('Welcome to Moai'),
       ),
     );
   }
