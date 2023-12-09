@@ -1,3 +1,6 @@
+# 9.12.2023 [20:17]
+- [feat]: Finally Decided on a Solidity Code implementation
+
 # 9.12.2023 [10:04]
 - [feat]: WalletProvider: created getter accountAddress that returns checksumEthereumAddress
 
