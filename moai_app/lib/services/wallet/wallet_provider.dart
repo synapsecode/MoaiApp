@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:math';
 import 'package:ed25519_hd_key/ed25519_hd_key.dart';
 import 'package:eth_sig_util/eth_sig_util.dart';
+import 'package:ethereum_addresses/ethereum_addresses.dart';
 import 'package:flutter/foundation.dart';
 import 'package:bip39/bip39.dart' as bip39;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -22,10 +23,13 @@ abstract class WalletAddressService {
 class MoaiWalletProvider extends ChangeNotifier
     implements WalletAddressService {
   String? privateKey;
-  String? accountAddress;
+  String? _pubkey;
   RPCEngine rpcEngine = RPCEngine();
 
-  bool get isWalletActive => privateKey != null && accountAddress != null;
+  bool get isWalletActive => privateKey != null && _pubkey != null;
+
+  String? get accountAddress =>
+      _pubkey == null ? null : checksumEthereumAddress(_pubkey!);
 
   @override
   String generateMnemonic() {
@@ -67,7 +71,7 @@ class MoaiWalletProvider extends ChangeNotifier
     print('Saving WalletDetails to SharedPreferences');
     await setPrivateKey(pvk);
 
-    accountAddress = puk.hex;
+    _pubkey = puk.hex;
     privateKey = pvk;
 
     return {
@@ -86,7 +90,7 @@ class MoaiWalletProvider extends ChangeNotifier
     print('PublicKey/Address: $puk');
     print('===========================================');
     await setPrivateKey(pvk);
-    accountAddress = puk.hex;
+    _pubkey = puk.hex;
     privateKey = pvk;
     return {
       'address': puk,
@@ -97,7 +101,7 @@ class MoaiWalletProvider extends ChangeNotifier
   Future<void> loadPrivateKey() async {
     privateKey = await storage.read(key: 'privatekey');
     if (privateKey != null) {
-      accountAddress = getPublicKey(privateKey!).hex;
+      _pubkey = getPublicKey(privateKey!).hex;
     }
     notifyListeners();
   }
@@ -114,7 +118,7 @@ class MoaiWalletProvider extends ChangeNotifier
   logout() async {
     await storage.delete(key: 'privatekey');
     privateKey = null;
-    accountAddress = null;
+    _pubkey = null;
     notifyListeners();
   }
 
@@ -172,11 +176,11 @@ class RPCEngine {
     return ethClient;
   }
 
-  Future<double> fetchBalanceInETH(String accountAddress) async {
+  Future<double> fetchBalanceInETH(String addr) async {
     final Map<String, dynamic> data = {
       'jsonrpc': '2.0',
       'method': 'eth_getBalance',
-      'params': [accountAddress, 'latest'],
+      'params': [addr, 'latest'],
       'id': 1,
     };
     final http.Response response = await http.post(

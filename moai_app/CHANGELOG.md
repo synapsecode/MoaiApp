@@ -1,3 +1,9 @@
+# 9.12.2023 [10:04]
+- [feat]: WalletProvider: created getter accountAddress that returns checksumEthereumAddress
+
+# 9.12.2023 [9:50]
+- [feat]: Figured out how to send PushProtocol notifications from a smart contract 
+
 # 9.12.2023 [6:59]
 - [feat]: Used Faucet to get Mumbai MATIC into Wallet
 - [feat]: Tested Transaction from one wallet to another successfully
