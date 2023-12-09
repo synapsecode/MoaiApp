@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:moai_app/extensions/extensions.dart';
 import 'package:moai_app/playground/xmtp_test_fragment.dart';
 import 'package:moai_app/services/wallet/wallet_provider.dart';
 import 'package:moai_app/services/xmtp/xmtpinterface.dart';
@@ -45,7 +47,10 @@ class _WalletPlaygroundState extends ConsumerState<WalletPlayground> {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             Text('IsLoggedIn => ${walletProvider.isWalletActive}'),
-            Text('Address => ${walletProvider.accountAddress}'),
+            Text('Address => ${walletProvider.accountAddress}').onClick(() {
+              Clipboard.setData(
+                  ClipboardData(text: walletProvider.accountAddress!));
+            }),
             const SizedBox(height: 20),
             Text('PrivateKey => ${walletProvider.privateKey}'),
             const SizedBox(height: 20),
@@ -113,9 +118,8 @@ class _WalletPlaygroundState extends ConsumerState<WalletPlayground> {
             ),
             ElevatedButton(
               onPressed: () async {
-                double maticTOEthMultiplier = 0.00000038600098111706;
                 await walletProvider.sendTransaction(
-                  valueInEth: 0.001 * maticTOEthMultiplier,
+                  valueInEth: 0.001,
                   receiverAddress: '0x79c775e8739253f1c8a68355df22e0e29ad7bf1d',
                 );
               },
