@@ -5,7 +5,6 @@ import 'package:flutter_webrtc/flutter_webrtc.dart';
 import 'package:huddle01_flutter_client/huddle_client.dart';
 import 'package:moai_app/main.dart';
 import 'package:moai_app/secrets.dart';
-import 'package:moai_app/services/huddle01/template.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:http/http.dart' as http;
 
@@ -14,16 +13,28 @@ class HuddleEngine {
   static final muteState = StateProvider<bool>((ref) => true);
   static final cameraOffState = StateProvider<bool>((ref) => true);
 
-  static RTCVideoRenderer? remoteRenderer;
+  static List<RTCVideoRenderer> remoteVideoRenderers = [];
+
+  // static RTCVideoRenderer? remoteRenderer;
   static final HuddleClient huddleClient = HuddleClient();
 
   static String get RID => gpc.read(currentlyActiveRoom);
   static BuildContext get context => navigatorKey.currentState!.context;
 
-  static initializeRemoteRenderer() async {
-    remoteRenderer = RTCVideoRenderer();
-    await remoteRenderer!.initialize();
-    remoteRenderer!.srcObject = huddleClient.getFirstRemoteStream();
+  static initializeRemoteRendererByIndex(int index) async {
+    if (index < remoteVideoRenderers.length) return remoteVideoRenderers[index];
+    remoteVideoRenderers[index] = RTCVideoRenderer();
+    await remoteVideoRenderers[index].initialize();
+    remoteVideoRenderers[index].srcObject = _getMediaStreamByIndex(index);
+  }
+
+  static MediaStream? _getMediaStreamByIndex(int idx) {
+    final consumers = huddleClient.getConsumers();
+    if (idx > consumers.length) {
+      print('getMediaStreamByIndex: Index Greater than number of consumers.');
+      return null;
+    }
+    return (consumers.values.toList()[idx]).stream;
   }
 
   static Future<void> createRoom({
@@ -59,7 +70,7 @@ class HuddleEngine {
     await _initializeHuddle();
     await _joinLobby(roomID);
     print('Joined lobby; Joining Room next');
-    await Future.delayed(Duration(seconds: 1));
+    await Future.delayed(const Duration(seconds: 1));
     await huddleClient.joinRoom();
     gpc.read(currentlyActiveRoom.notifier).state = roomID;
   }
@@ -96,6 +107,25 @@ class HuddleEngine {
       print('Turned Camera Off');
     }
     gpc.read(cameraOffState.notifier).state = !cs;
+  }
+
+  static getLocalVideoView() {
+    return huddleClient.getRenderer() != null
+        ? RTCVideoView(
+            huddleClient.getRenderer()!,
+            objectFit: RTCVideoViewObjectFit.RTCVideoViewObjectFitContain,
+          )
+        : null;
+  }
+
+  static getRemoteVideoViewByIndex(int idx) {
+    final remoteRenderer = initializeRemoteRendererByIndex(idx);
+    return huddleClient.getConsumers().isNotEmpty && remoteRenderer != null
+        ? RTCVideoView(
+            remoteRenderer!,
+            objectFit: RTCVideoViewObjectFit.RTCVideoViewObjectFitCover,
+          )
+        : null;
   }
 
   // ================ Internal Functions =============

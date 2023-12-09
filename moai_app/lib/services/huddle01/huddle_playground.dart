@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:huddle01_flutter_client/data/value_notifiers.dart' as huddlevns;
-import 'package:huddle01_flutter_client/huddle_client.dart';
 import 'package:moai_app/extensions/extensions.dart';
-import 'package:moai_app/extensions/miscextensions.dart';
 
 import 'package:moai_app/services/huddle01/huddle_engine.dart';
 import 'package:moai_app/main.dart';
@@ -35,36 +33,62 @@ class _HuddlePlaygroundState extends ConsumerState<HuddlePlayground> {
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
-        title: Text('Huddle Playground'),
+        title: const Text('Huddle Playground'),
       ),
       body: SingleChildScrollView(
         child: Column(
           children: [
-            ValueListenableBuilder(
-              valueListenable: huddlevns.roomState,
-              builder: (ctx, val, _) {
-                return Container(
-                  padding: const EdgeInsets.all(15),
-                  decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(15),
-                      color: Colors.blueGrey.shade100),
-                  child: Column(
-                    children: [
-                      Text(
-                        "Room State\n ${val['roomState']}",
-                        textAlign: TextAlign.center,
-                        style:
-                            const TextStyle(fontSize: 15, color: Colors.black),
+            Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                ValueListenableBuilder(
+                  valueListenable: huddlevns.roomState,
+                  builder: (ctx, val, _) {
+                    return Container(
+                      padding: const EdgeInsets.all(15),
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(15),
+                          color: Colors.blueGrey.shade100),
+                      child: Column(
+                        children: [
+                          Text(
+                            "Room State\n ${val['roomState']}",
+                            textAlign: TextAlign.center,
+                            style: const TextStyle(
+                                fontSize: 15, color: Colors.black),
+                          ),
+                        ],
                       ),
-                    ],
-                  ),
-                ).center();
-              },
+                    ).center();
+                  },
+                ),
+                ValueListenableBuilder(
+                  valueListenable: huddlevns.peersList,
+                  builder: (ctx, val, _) {
+                    return Container(
+                      padding: const EdgeInsets.all(15),
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(15),
+                          color: Colors.blueGrey.shade100),
+                      child: Column(
+                        children: [
+                          Text(
+                            "Peers\n ${val.length}",
+                            textAlign: TextAlign.center,
+                            style: const TextStyle(
+                                fontSize: 15, color: Colors.black),
+                          ),
+                        ],
+                      ),
+                    );
+                  },
+                ).addLeftMargin(20),
+              ],
             ),
-            SizedBox(height: 20),
-            Text('Room ID').center(),
+            const SizedBox(height: 20),
+            const Text('Room ID').center(),
             Text(roomID.isEmpty ? 'Nil' : roomID).size(30),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             ElevatedButton(
               onPressed: () async {
                 final wp = gpc.read(moaiWalletController);
@@ -74,7 +98,7 @@ class _HuddlePlaygroundState extends ConsumerState<HuddlePlayground> {
                   title: '0xROOOOM',
                 );
               },
-              child: Text('Create New Room'),
+              child: const Text('Create New Room'),
             ),
             Row(
               mainAxisSize: MainAxisSize.min,
@@ -85,7 +109,7 @@ class _HuddlePlaygroundState extends ConsumerState<HuddlePlayground> {
                       context: context,
                       builder: (context) {
                         return AlertDialog(
-                          title: Text('Join Room'),
+                          title: const Text('Join Room'),
                           content: Column(
                             mainAxisSize: MainAxisSize.min,
                             children: [
@@ -115,24 +139,38 @@ class _HuddlePlaygroundState extends ConsumerState<HuddlePlayground> {
                       },
                     );
                   },
-                  child: Text('Join Existing Room'),
+                  child: const Text('Join Existing Room'),
                 ),
                 ElevatedButton(
                   onPressed: () async {
                     await HuddleEngine.leaveRoom();
                   },
-                  child: Text('Leave Room').color(Colors.white),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.red,
                   ),
+                  child: const Text('Leave Room').color(Colors.white),
                 ).addLeftMargin(10),
               ],
             ).addTopMargin(10),
-            Container(
-              height: 200,
-              width: 140,
-              color: Colors.grey,
-            ).addVerticalMargin(20),
+            Stack(
+              children: [
+                Container(
+                  color: Colors.grey,
+                  width: 220,
+                  height: 300,
+                  child: HuddleEngine.getLocalVideoView(),
+                ).addVerticalMargin(20),
+                Positioned(
+                  bottom: 30,
+                  left: 10,
+                  child: Container(
+                    color: Colors.black.withAlpha(100),
+                    padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
+                    child: const Text('Me').color(Colors.white),
+                  ),
+                ),
+              ],
+            ),
             Row(
               mainAxisSize: MainAxisSize.min,
               children: [
@@ -160,6 +198,47 @@ class _HuddlePlaygroundState extends ConsumerState<HuddlePlayground> {
                 ).addLeftMargin(20),
               ],
             ),
+            const SizedBox(height: 20),
+            const Text('Other Members').size(28),
+            const SizedBox(height: 20),
+            ValueListenableBuilder(
+              valueListenable: huddlevns.peersList,
+              builder: (ctx, val, _) {
+                if (val.isEmpty) {
+                  return const Text('No Members').center().addTopMargin(50);
+                }
+                print("PeersVal => $val");
+                return Wrap(
+                  children: [
+                    for (int i = 0; i < val.length; i++) ...[
+                      Stack(
+                        children: [
+                          Container(
+                            color: Colors.grey,
+                            width: 100,
+                            height: 180,
+                            child: HuddleEngine.getRemoteVideoViewByIndex(i),
+                          ).addVerticalMargin(5).addHorizontalMargin(5),
+                          Positioned(
+                            bottom: 10,
+                            left: 10,
+                            child: Container(
+                              color: Colors.black.withAlpha(100),
+                              padding: const EdgeInsets.symmetric(
+                                  vertical: 5, horizontal: 10),
+                              child: Text('Guest ${i + 1}')
+                                  .color(Colors.white)
+                                  .size(10),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ]
+                  ],
+                );
+              },
+            ).addLeftMargin(20),
+            const SizedBox(height: 220),
           ],
         ),
       ),

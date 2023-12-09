@@ -1,5 +1,8 @@
+# 9.12.2023 [6:43]
+- [feat]: Huddle01 Playground Full Implementation Done (Untested)
+
 # 9.12.2023 [5:41]
-- [feat]: Huddle Engine Created
+- [feat]: Huddle01 Engine Created
 - [feat]: Huddle01 Playground Created
 
 # 9.12.2023 [3:00]
