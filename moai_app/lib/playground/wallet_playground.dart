@@ -113,6 +113,16 @@ class _WalletPlaygroundState extends ConsumerState<WalletPlayground> {
             ),
             ElevatedButton(
               onPressed: () async {
+                double maticTOEthMultiplier = 0.00000038600098111706;
+                await walletProvider.sendTransaction(
+                  valueInEth: 0.001 * maticTOEthMultiplier,
+                  receiverAddress: '0x79c775e8739253f1c8a68355df22e0e29ad7bf1d',
+                );
+              },
+              child: const Text('Send Small Amount'),
+            ),
+            ElevatedButton(
+              onPressed: () async {
                 final hash = await walletProvider.personalSign(
                     message: 'Ratofy: SPM Demo');
                 print(hash);

@@ -163,9 +163,9 @@ class MoaiWalletProvider extends ChangeNotifier
 }
 
 class RPCEngine {
-  final int chainID = 137; //POLYGON
+  final int chainID = 80001; //POLYGON
   static const String rpcURL =
-      'https://polygon-mainnet.g.alchemy.com/v2/FxMAYfEas1BSJM1WbAjkVRAe-AVG_l_k';
+      'https://polygon-mumbai.g.alchemy.com/v2/FxMAYfEas1BSJM1WbAjkVRAe-AVG_l_k';
 
   static Web3Client getWeb3Client() {
     final ethClient = Web3Client(rpcURL, http.Client());

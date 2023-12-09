@@ -1,3 +1,7 @@
+# 9.12.2023 [6:59]
+- [feat]: Used Faucet to get Mumbai MATIC into Wallet
+- [feat]: Tested Transaction from one wallet to another successfully
+
 # 9.12.2023 [6:43]
 - [feat]: Huddle01 Playground Full Implementation Done (Untested)
 
