@@ -1,3 +1,6 @@
+# 9.12.2023 [20:35]
+- [feat]: moai_contracts directory created
+
 # 9.12.2023 [20:17]
 - [feat]: Finally Decided on a Solidity Code implementation
 

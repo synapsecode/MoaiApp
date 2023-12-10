@@ -165,7 +165,8 @@ class _HuddlePlaygroundState extends ConsumerState<HuddlePlayground> {
                   left: 10,
                   child: Container(
                     color: Colors.black.withAlpha(100),
-                    padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
+                    padding:
+                        const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
                     child: const Text('Me').color(Colors.white),
                   ),
                 ),
@@ -201,6 +202,11 @@ class _HuddlePlaygroundState extends ConsumerState<HuddlePlayground> {
             const SizedBox(height: 20),
             const Text('Other Members').size(28),
             const SizedBox(height: 20),
+            ValueListenableBuilder(
+                valueListenable: huddlevns.errorState,
+                builder: (ctx, val, _) {
+                  return Text(val.toString()).limitSize(150);
+                }),
             ValueListenableBuilder(
               valueListenable: huddlevns.peersList,
               builder: (ctx, val, _) {

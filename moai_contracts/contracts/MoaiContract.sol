@@ -196,6 +196,4 @@ contract MoaiContract {
     }
 }
 
-
-
 // Sepolia PushProtocol Contract: 0x0C34d54a09CFe75BCcd878A469206Ae77E0fe6e7

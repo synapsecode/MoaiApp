@@ -21,22 +21,6 @@ class HuddleEngine {
   static String get RID => gpc.read(currentlyActiveRoom);
   static BuildContext get context => navigatorKey.currentState!.context;
 
-  static initializeRemoteRendererByIndex(int index) async {
-    if (index < remoteVideoRenderers.length) return remoteVideoRenderers[index];
-    remoteVideoRenderers[index] = RTCVideoRenderer();
-    await remoteVideoRenderers[index].initialize();
-    remoteVideoRenderers[index].srcObject = _getMediaStreamByIndex(index);
-  }
-
-  static MediaStream? _getMediaStreamByIndex(int idx) {
-    final consumers = huddleClient.getConsumers();
-    if (idx > consumers.length) {
-      print('getMediaStreamByIndex: Index Greater than number of consumers.');
-      return null;
-    }
-    return (consumers.values.toList()[idx]).stream;
-  }
-
   static Future<void> createRoom({
     required String hostAddress,
     required String title,
@@ -77,6 +61,15 @@ class HuddleEngine {
 
   static leaveRoom() async {
     gpc.read(currentlyActiveRoom.notifier).state = '';
+
+    //Stop Audio & Video
+    await huddleClient.stopProducingAudio();
+    await huddleClient.stopAudioStream();
+    huddleClient.stopProducingVideo();
+    huddleClient.stopVideoStream();
+    gpc.read(muteState.notifier).state = true;
+    gpc.read(cameraOffState.notifier).state = true;
+
     await huddleClient.leaveRoom();
     await huddleClient.leaveLobby();
   }
@@ -88,8 +81,8 @@ class HuddleEngine {
       await huddleClient.produceAudio(huddleClient.getAudioStream());
       print('Unmuted Audio');
     } else {
-      await huddleClient.stopAudioStream();
       await huddleClient.stopProducingAudio();
+      await huddleClient.stopAudioStream();
       print('Muted Audio');
     }
     gpc.read(muteState.notifier).state = !ms;
@@ -102,8 +95,8 @@ class HuddleEngine {
       await huddleClient.produceVideo(huddleClient.getVideoStream());
       print('Turned Camera On');
     } else {
-      huddleClient.stopVideoStream();
       huddleClient.stopProducingVideo();
+      huddleClient.stopVideoStream();
       print('Turned Camera Off');
     }
     gpc.read(cameraOffState.notifier).state = !cs;
@@ -118,14 +111,43 @@ class HuddleEngine {
         : null;
   }
 
+  static Future<Widget?> getRTCViewByIndex(int idx) async {
+    final remoteRenderer = await initializeRemoteRendererByIndex(idx);
+    return RTCVideoView(
+      remoteRenderer!,
+      objectFit: RTCVideoViewObjectFit.RTCVideoViewObjectFitContain,
+    );
+  }
+
+  static initializeRemoteRendererByIndex(int index) async {
+    if (index >= remoteVideoRenderers.length) {
+      remoteVideoRenderers.add(RTCVideoRenderer());
+    }
+    await remoteVideoRenderers[index].initialize();
+    remoteVideoRenderers[index].srcObject = _getMediaStreamByIndex(index);
+    final renderer = remoteVideoRenderers[index];
+    // print('Renderer: $renderer');
+    return renderer;
+  }
+
+  static MediaStream? _getMediaStreamByIndex(int idx) {
+    final consumers = huddleClient.getConsumers();
+    if (idx > consumers.length) {
+      print('getMediaStreamByIndex: Index Greater than number of consumers.');
+      return null;
+    }
+    return (consumers.values.toList()[idx]).stream;
+  }
+
   static getRemoteVideoViewByIndex(int idx) {
-    final remoteRenderer = initializeRemoteRendererByIndex(idx);
-    return huddleClient.getConsumers().isNotEmpty && remoteRenderer != null
-        ? RTCVideoView(
-            remoteRenderer!,
-            objectFit: RTCVideoViewObjectFit.RTCVideoViewObjectFitCover,
-          )
-        : null;
+    return FutureBuilder(
+        future: getRTCViewByIndex(idx),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.done) {
+            return snapshot.data ?? FlutterLogo();
+          }
+          return CircularProgressIndicator();
+        });
   }
 
   // ================ Internal Functions =============
