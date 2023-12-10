@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:moai_app/controllers/user_controller.dart';
 import 'package:moai_app/extensions/extensions.dart';
 import 'package:moai_app/services/blockchain/contract_interface.dart';
-import 'package:moai_app/services/pushprotocol/pushprotocol_engine.dart';
 import 'package:moai_app/services/wallet/wallet_provider.dart';
 
 class MoaiContractPlayground extends ConsumerStatefulWidget {
@@ -25,7 +23,7 @@ class _MoaiContractPlaygroundState
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Blockchain Playground'),
+        title: const Text('Blockchain Playground'),
         centerTitle: true,
       ),
       body: (wp.isWalletActive)
@@ -35,23 +33,23 @@ class _MoaiContractPlaygroundState
                   onPressed: () {
                     mci.getMoaiValue();
                   },
-                  child: Text('Check Value of Moai'),
+                  child: const Text('Check Value of Moai'),
                 ),
                 ElevatedButton(
                   onPressed: () {
                     mci.addMember(wp.accountEA!);
                   },
-                  child: Text('Enter this Moai'),
+                  child: const Text('Enter this Moai'),
                 ),
                 ElevatedButton(
                   onPressed: () {
                     mci.contribute(wp.accountEA!, 0.0005);
                   },
-                  child: Text('Enter this Moai'),
+                  child: const Text('Enter this Moai'),
                 )
               ],
             )
-          : Text('Connect Wallet').size(20).center(),
+          : const Text('Connect Wallet').size(20).center(),
     );
   }
 }

@@ -1,7 +1,6 @@
 import 'package:moai_app/main.dart';
 import 'package:moai_app/services/pushprotocol/ppsigner.dart';
 import 'package:moai_app/services/wallet/wallet_provider.dart';
-import 'package:provider/provider.dart';
 import 'package:ethers/signers/wallet.dart' as ethers;
 import 'package:push_restapi_dart/push_restapi_dart.dart';
 
@@ -14,7 +13,7 @@ class PushProtocolEngine {
       address: ethersWallet.address!,
     );
 
-    print('EWA: ${ethersWallet!.address}');
+    print('EWA: ${ethersWallet.address}');
     final user = await getUser(address: ethersWallet.address!);
 
     if (user == null) {
@@ -22,7 +21,7 @@ class PushProtocolEngine {
       return;
     }
 
-    String? pgpPrivateKey = null;
+    String? pgpPrivateKey;
     if (user.encryptedPrivateKey != null) {
       pgpPrivateKey = await decryptPGPKey(
         encryptedPGPPrivateKey: user.encryptedPrivateKey!,

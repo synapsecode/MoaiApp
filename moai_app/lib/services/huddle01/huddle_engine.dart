@@ -144,9 +144,9 @@ class HuddleEngine {
         future: getRTCViewByIndex(idx),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.done) {
-            return snapshot.data ?? FlutterLogo();
+            return snapshot.data ?? const FlutterLogo();
           }
-          return CircularProgressIndicator();
+          return const CircularProgressIndicator();
         });
   }
 

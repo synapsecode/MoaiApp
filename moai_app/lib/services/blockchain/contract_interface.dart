@@ -103,7 +103,7 @@ class MoaiContractInterface extends ChangeNotifier {
     );
     final response =
         await _web3client!.sendTransaction(_credentials!, transaction);
-    print('Transaction hash: ${response}');
+    print('Transaction hash: $response');
     loading = true;
     notifyListeners();
     return response;

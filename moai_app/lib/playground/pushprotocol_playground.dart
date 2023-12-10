@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:moai_app/services/pushprotocol/pushprotocol_engine.dart';
 
 class PushProtocolPlayground extends StatelessWidget {
@@ -9,7 +8,7 @@ class PushProtocolPlayground extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Push Protocol Playground'),
+        title: const Text('Push Protocol Playground'),
         centerTitle: true,
       ),
       body: Column(
@@ -18,7 +17,7 @@ class PushProtocolPlayground extends StatelessWidget {
             onPressed: () {
               PushProtocolEngine.connectToNotificationSocket();
             },
-            child: Text('Start Listening to Notifications'),
+            child: const Text('Start Listening to Notifications'),
           )
         ],
       ),

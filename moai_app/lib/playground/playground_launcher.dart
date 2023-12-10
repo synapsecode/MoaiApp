@@ -12,7 +12,7 @@ class PlaygroundLauncher extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Moai Playground'),
+        title: const Text('Moai Playground'),
         centerTitle: true,
       ),
       body: Column(
@@ -23,25 +23,25 @@ class PlaygroundLauncher extends StatelessWidget {
             onPressed: () {
               Navigator.of(context).pushNewPage(const WalletPlayground());
             },
-            child: Text('Wallet & XMTP Playground'),
+            child: const Text('Wallet & XMTP Playground'),
           ),
           ElevatedButton(
             onPressed: () {
               Navigator.of(context).pushNewPage(const HuddlePlayground());
             },
-            child: Text('Huddle01 Playground'),
+            child: const Text('Huddle01 Playground'),
           ),
           ElevatedButton(
             onPressed: () {
               Navigator.of(context).pushNewPage(const PushProtocolPlayground());
             },
-            child: Text('PushProtocol Playground'),
+            child: const Text('PushProtocol Playground'),
           ),
           ElevatedButton(
             onPressed: () {
               Navigator.of(context).pushNewPage(const MoaiContractPlayground());
             },
-            child: Text('MoaiContract Playground'),
+            child: const Text('MoaiContract Playground'),
           ),
         ],
       ).center(),
