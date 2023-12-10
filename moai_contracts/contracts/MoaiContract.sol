@@ -36,6 +36,7 @@ contract MoaiContract {
     address public admin;
     uint256 public standardAmount;
     address public pushProtocolContractAddress;
+    //TODO: have a field here named recipeint and do checks against it
 
     mapping(address => Member) public members;
     address[] public memberAddresses;
