@@ -45,6 +45,7 @@ class _AllXMTPChatsState extends ConsumerState<AllXMTPChats> {
       ),
       body: Column(
         children: [
+          Text(wp.accountAddress.toString()).addVerticalMargin(30),
           ...convs
               .map(
                 (x) => ListTile(
@@ -52,7 +53,7 @@ class _AllXMTPChatsState extends ConsumerState<AllXMTPChats> {
                   title: Text(x.peer?.hex ?? '0xNone'),
                   subtitle: Text('click here to chat'),
                   onTap: () async {
-                    if (x.peer?.hex == null) return;
+                    if (x.peer.hex == null) return;
                     final conv = await MoaiXMTPInterface.instance.xmtpActions!
                         .createConversation(x.peer!.hex);
                     Navigator.of(context).pushNewPage(

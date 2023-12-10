@@ -4,6 +4,7 @@ import 'package:moai_app/common/dialogs/connect2wallet.dart';
 import 'package:moai_app/extensions/extensions.dart';
 import 'package:moai_app/screens/allchats.dart';
 import 'package:moai_app/services/wallet/wallet_provider.dart';
+import 'package:moai_app/services/xmtp/xmtpinterface.dart';
 
 class MoaiManager {}
 
@@ -23,29 +24,23 @@ class _WelcomeScreenState extends ConsumerState<WelcomeScreen> {
       appBar: AppBar(
         title: const Text('Welcome to Moai'),
       ),
-      body: (!wp.isWalletActive)
-          ? Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                ElevatedButton(
-                  onPressed: () {
-                    ConnectToMoaiWallet.show(context);
-                  },
-                  child: Text('Connect Wallet'),
-                )
-              ],
-            ).center()
-          : Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                ElevatedButton(
-                  onPressed: () {
-                    Navigator.of(context).pushNewPage(AllXMTPChats());
-                  },
-                  child: const Text('Go to XMTP Chat Demo'),
-                ),
-              ],
-            ).center(),
+      body: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          ElevatedButton(
+            onPressed: () {
+              Navigator.of(context).pushNewPage(AllXMTPChats());
+            },
+            child: const Text('Go to XMTP Chat Demo'),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              MoaiXMTPInterface.instance.terminateAll();
+            },
+            child: const Text('Logout'),
+          ),
+        ],
+      ).center(),
     );
   }
 }
