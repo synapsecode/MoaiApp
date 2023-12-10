@@ -12,6 +12,15 @@ class ConnectToMoaiWallet extends StatefulWidget {
 
   @override
   State<ConnectToMoaiWallet> createState() => _ConnectToMoaiWalletState();
+
+  static show(BuildContext context) {
+    return showDialog(
+      context: context,
+      builder: (context) {
+        return ConnectToMoaiWallet();
+      },
+    );
+  }
 }
 
 class _ConnectToMoaiWalletState extends State<ConnectToMoaiWallet> {

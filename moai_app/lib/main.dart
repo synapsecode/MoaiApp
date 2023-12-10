@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:moai_app/playground/playground_launcher.dart';
+import 'package:moai_app/screens/welcome.dart';
 import 'package:moai_app/services/xmtp/xmtpinterface.dart';
 
 final navigatorKey = GlobalKey<NavigatorState>();
@@ -36,20 +37,7 @@ class MoaiApplication extends StatelessWidget {
           useMaterial3: true,
         ),
         navigatorKey: navigatorKey,
-        home: const PlaygroundLauncher(),
-      ),
-    );
-  }
-}
-
-class WelcomeScreen extends StatelessWidget {
-  const WelcomeScreen({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Welcome to Moai'),
+        home: const WelcomeScreen(),
       ),
     );
   }
