@@ -30,6 +30,8 @@ class MoaiWalletProvider extends ChangeNotifier
 
   String? get accountAddress =>
       _pubkey == null ? null : checksumEthereumAddress(_pubkey!);
+  EthereumAddress? get accountEA =>
+      accountAddress == null ? null : EthereumAddress.fromHex(accountAddress!);
 
   @override
   String generateMnemonic() {
